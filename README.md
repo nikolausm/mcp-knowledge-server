@@ -12,6 +12,8 @@ Ein Model Context Protocol (MCP) Server zur Verwaltung von Wissen und Informatio
 
 ## Installation
 
+Voraussetzung: Node.js 20 oder neuer.
+
 1. Installiere die Abhängigkeiten:
 ```bash
 cd ~/mcp-knowledge-server
