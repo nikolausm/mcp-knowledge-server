@@ -2,6 +2,8 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
+  type CallToolRequest,
+  type CallToolResult,
   ErrorCode,
   ListToolsRequestSchema,
   McpError,
@@ -191,33 +193,36 @@ class KnowledgeServer {
       ],
     }));
     
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      switch (request.params.name) {
-        case 'store_knowledge':
-          return this.storeKnowledge(request.params.arguments);
+    this.server.setRequestHandler<typeof CallToolRequestSchema>(
+      CallToolRequestSchema,
+      async (request: CallToolRequest): Promise<CallToolResult> => {
+        switch (request.params.name) {
+          case 'store_knowledge':
+            return this.storeKnowledge(request.params.arguments);
           
-        case 'retrieve_knowledge':
-          return this.retrieveKnowledge(request.params.arguments);
+          case 'retrieve_knowledge':
+            return this.retrieveKnowledge(request.params.arguments);
           
-        case 'update_knowledge':
-          return this.updateKnowledge(request.params.arguments);
+          case 'update_knowledge':
+            return this.updateKnowledge(request.params.arguments);
           
-        case 'delete_knowledge':
-          return this.deleteKnowledge(request.params.arguments);
+          case 'delete_knowledge':
+            return this.deleteKnowledge(request.params.arguments);
           
-        case 'list_categories':
-          return this.listCategories();
+          case 'list_categories':
+            return this.listCategories();
           
-        default:
-          throw new McpError(
-            ErrorCode.MethodNotFound,
-            `Unbekanntes Tool: ${request.params.name}`
-          );
+          default:
+            throw new McpError(
+              ErrorCode.MethodNotFound,
+              `Unbekanntes Tool: ${request.params.name}`
+            );
+        }
       }
-    });
+    );
   }
   
-  private async storeKnowledge(args: any) {
+  private async storeKnowledge(args: any): Promise<CallToolResult> {
     const kb = await this.loadKnowledgeBase();
     
     const newEntry: KnowledgeEntry = {
@@ -243,7 +248,7 @@ class KnowledgeServer {
     };
   }
   
-  private async retrieveKnowledge(args: any) {
+  private async retrieveKnowledge(args: any): Promise<CallToolResult> {
     const kb = await this.loadKnowledgeBase();
     let results = kb.entries;
     
@@ -279,7 +284,7 @@ class KnowledgeServer {
     };
   }
   
-  private async updateKnowledge(args: any) {
+  private async updateKnowledge(args: any): Promise<CallToolResult> {
     const kb = await this.loadKnowledgeBase();
     const index = kb.entries.findIndex(e => e.id === args.id);
     
@@ -311,7 +316,7 @@ class KnowledgeServer {
     };
   }
   
-  private async deleteKnowledge(args: any) {
+  private async deleteKnowledge(args: any): Promise<CallToolResult> {
     const kb = await this.loadKnowledgeBase();
     const index = kb.entries.findIndex(e => e.id === args.id);
     
@@ -335,7 +340,7 @@ class KnowledgeServer {
     };
   }
   
-  private async listCategories() {
+  private async listCategories(): Promise<CallToolResult> {
     const kb = await this.loadKnowledgeBase();
     const categories = [...new Set(kb.entries.map(e => e.category))];
     
