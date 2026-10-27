@@ -79,3 +79,7 @@ Für die Entwicklung kannst du den Server direkt mit TypeScript starten:
 ```bash
 npm run dev
 ```
+
+`npm test` baut den Server und prüft alle fünf Tools über stdio mit temporären,
+synthetischen Wissensdatenbanken. Bestehende Wissensdaten werden nicht verwendet.
+GitHub CI führt diese Tests und das Dependency-Audit unter Node.js 20 und 24 aus.
